@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Notes de switchs et claviers</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='22' width='80' height='56' rx='10' fill='%231f3a5f'/><rect x='20' y='32' width='14' height='12' rx='3' fill='%23f2efe8'/><rect x='43' y='32' width='14' height='12' rx='3' fill='%23f2efe8'/><rect x='66' y='32' width='14' height='12' rx='3' fill='%23e07a3f'/><rect x='20' y='54' width='60' height='12' rx='3' fill='%23f2efe8'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap top">
+  <p class="kicker">Agrégateur de tests</p>
+  <h1>Notes de switchs et de claviers</h1>
+  <p class="lede">Les notes de plusieurs testeurs, réunies produit par produit. Chaque note reste celle de son auteur, avec un lien vers son test.</p>
+  <ul class="sources" id="sources"></ul>
+</header>
+
+<nav class="wrap tabs" role="tablist" aria-label="Catégorie">
+  <button role="tab" type="button" data-cat="switch" aria-selected="true">Switchs <span id="n-switch"></span></button>
+  <button role="tab" type="button" data-cat="clavier" aria-selected="false">Claviers <span id="n-clavier"></span></button>
+</nav>
+
+<section class="wrap controls" aria-label="Filtres">
+  <div class="row">
+    <input id="q" type="search" placeholder="Rechercher un produit ou une marque…" autocomplete="off">
+    <label class="sel">Trier
+      <select id="sort">
+        <option value="combine">Note combinée</option>
+        <option value="nb">Nombre de testeurs</option>
+        <option value="nom">Nom (A → Z)</option>
+        <option value="date">Test le plus récent</option>
+      </select>
+    </label>
+  </div>
+  <div class="row chips" id="f-src"></div>
+  <div class="row">
+    <label class="check"><input type="checkbox" id="f-multi"> Seulement les produits notés par plusieurs testeurs</label>
+    <button id="reset" class="ghost" type="button">Réinitialiser</button>
+  </div>
+  <p class="result" id="result" aria-live="polite"></p>
+</section>
+
+<main class="wrap">
+  <ol class="list" id="list"></ol>
+  <p class="more"><button id="more" type="button">Afficher plus</button></p>
+</main>
+
+<footer class="wrap foot">
+  <p><strong>Note combinée</strong> : chaque testeur a sa propre échelle (ThereminGoat note rarement au-dessus de 85/100, Aurore utilise les étoiles…).
+    Pour comparer, chaque note est convertie en <em>rang centile dans sa source</em> (100 = meilleur produit de ce testeur, 50 = au milieu),
+    puis on fait la moyenne. C'est un repère, pas une vérité.</p>
+  <p>Toutes les notes, sous-notes et points forts/faibles appartiennent à leurs auteurs ; suivez les liens pour lire leurs tests complets.</p>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ const PAGE = 50;
 let D, cat = "switch", shown = PAGE, view = [];
 const state = {q: "", src: new Set(), multi: false, sort: "combine"};
 
-const score = a => a.sur === 100 ? `${fr(a.note)}/100` : `${fr(a.note)}★`;
+const score = a => a.sur === 5 ? `${fr(a.note)}★` : `${fr(a.note)}/${a.sur}`;
 const last = it => it.avis.map(a => a.date || "").sort().pop() || "";
 
 function apply(){
@@ -32,6 +32,11 @@ function sub(a){
     return `<div class="sub">${Object.keys(best).map(k => `<span>${k}</span><span class="bar" title="comparé à la meilleure note de ThereminGoat dans ce critère (${best[k]})"><i style="width:${Math.round(100 * d[k] / best[k])}%"></i></span><span>${d[k]} pts</span>`).join("")}</div>
       <p class="meta">Rang ${d.rang} sur ${D.sources.theremingoat.avis} · total sans pondération ${d.total_brut}/100</p>`;
   }
+  if (a.source === "guanwei") {
+    return `<div class="sub"><span>régularité</span><span class="bar"><i style="width:${d.regularite}%"></i></span><span>${fr(d.regularite)} %</span>
+      <span>douceur</span><span class="bar"><i style="width:${d.douceur}%"></i></span><span>${fr(d.douceur)} %</span></div>
+      <p class="meta">Rang ${d.rang} sur ${D.sources.guanwei.avis} · nom d'origine ${esc(d.nom_chinois)}${d.prix_yuan ? ` · ${fr(d.prix_yuan)} ¥ le switch` : ""}</p>`;
+  }
   if (a.source === "aurore") {
     return `<p class="meta">${esc((d.son || []).join(", "))}${d.prix ? " · " + esc(d.prix) : ""}${d.audios ? ` · ${d.audios} enregistrement${d.audios > 1 ? "s" : ""}` : ""}</p>`;
   }
@@ -41,12 +46,15 @@ function sub(a){
 }
 
 function detail(it){
-  return it.avis.map(a => { const s = D.sources[a.source]; return `
+  const ec = (it.ecoute || []).map(e => `<div class="rv" style="--c:var(--s-${e.source})"><h4><span>${esc(D.sources[e.source].nom)}</span><span class="sc">🔊</span></h4>
+      <p class="meta">Test sonore filmé, sans note</p>
+      <a class="go" href="${esc(e.video || e.url)}" target="_blank" rel="noopener">Écouter le test →</a></div>`).join("");
+  return ec + it.avis.map(a => { const s = D.sources[a.source]; return `
     <div class="rv" style="--c:var(--s-${a.source})">
       <h4><span>${esc(s.nom)}</span><span class="sc">${score(a)}</span></h4>
       <p class="meta">${a.date ? "Testé le " + new Date(a.date).toLocaleDateString("fr-FR") + " · " : ""}centile ${a.centile} dans cette source</p>
       ${sub(a)}
-      <a class="go" href="${esc(a.url)}" target="_blank" rel="noopener">${a.source === "aurore" ? "Voir la fiche, l'avis et les sons" : a.source === "theremingoat" ? "Voir la fiche de notation (PDF)" : "Lire le test"} →</a>
+      <a class="go" href="${esc(a.url)}" target="_blank" rel="noopener">${{aurore: "Voir la fiche, l'avis et les sons", theremingoat: "Voir la fiche de notation (PDF)", guanwei: "Voir le classement complet"}[a.source] || "Lire le test"} →</a>
     </div>`; }).join("");
 }
 
@@ -61,6 +69,7 @@ function render(){
         ${it.photo ? `<img class="ph" loading="lazy" src="${esc(it.photo)}" alt="">` : `<span class="ph none">${cat === "switch" ? "▣" : "⌨"}</span>`}
         <span class="name"><h3>${esc(it.nom)}</h3><p>${esc([it.fabricant, it.type].filter(Boolean).join(" · "))}</p></span>
         <span class="badges">${it.avis.map(a => `<span class="b" style="--c:var(--s-${a.source})" title="${esc(D.sources[a.source].nom)}">${esc(D.sources[a.source].nom)} ${score(a)}</span>`).join("")}
+          ${it.ecoute ? '<span class="b" style="--c:var(--s-clickandthock)" title="Test sonore Click and Thock">🔊</span>' : ""}
           <span class="comb" title="Note combinée (moyenne des rangs centiles)"><strong>${it.combine}</strong><small>combinée</small></span></span>
       </button>
       <div class="detail" hidden></div>
@@ -72,7 +81,7 @@ function render(){
 function setCat(c){
   cat = c; shown = PAGE;
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.cat === c));
-  const srcs = Object.keys(D.sources).filter(s => D.produits.some(it => it.cat === c && it.avis.some(a => a.source === s)));
+  const srcs = Object.keys(D.sources).filter(s => !D.sources[s].info && D.produits.some(it => it.cat === c && it.avis.some(a => a.source === s)));
   [...state.src].forEach(s => { if (!srcs.includes(s)) state.src.delete(s); });
   $("#f-src").innerHTML = `<span class="lab">Testé par</span>` + srcs.map(s => `<button type="button" data-s="${s}" aria-pressed="${state.src.has(s)}">${esc(D.sources[s].nom)}</button>`).join("");
   render();
@@ -84,7 +93,7 @@ async function init(){
   D._tgMax = {toucher: 0, stabilité: 0, son: 0, contexte: 0, autre: 0};
   D.produits.forEach(it => it.avis.forEach(a => { if (a.source === "theremingoat") for (const k in D._tgMax) D._tgMax[k] = Math.max(D._tgMax[k], a.details[k]); }));
   $("#sources").innerHTML = Object.entries(D.sources).map(([k, s]) => `
-    <li style="--c:var(--s-${k})"><b><a href="${esc(s.lien)}" target="_blank" rel="noopener">${esc(s.nom)}</a><span>${s.avis} notes · ${s.langue}</span></b>
+    <li style="--c:var(--s-${k})"><b><a href="${esc(s.lien)}" target="_blank" rel="noopener">${esc(s.nom)}</a><span>${s.avis} ${s.info ? "écoutes" : "notes"} · ${s.langue}</span></b>
     <span>${esc(s.quoi)} · ${esc(s.echelle)}</span></li>`).join("");
   for (const c of ["switch", "clavier", "keycaps"]) {
     const n = D.produits.filter(p => p.cat === c).length, tab = document.querySelector(`.tabs [data-cat="${c}"]`);

@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Notes de switchs et claviers</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='22' width='80' height='56' rx='10' fill='%231f3a5f'/><rect x='20' y='32' width='14' height='12' rx='3' fill='%23f2efe8'/><rect x='43' y='32' width='14' height='12' rx='3' fill='%23f2efe8'/><rect x='66' y='32' width='14' height='12' rx='3' fill='%23e07a3f'/><rect x='20' y='54' width='60' height='12' rx='3' fill='%23f2efe8'/></svg>">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <header class="wrap top">
@@ -34,6 +34,13 @@
       </select>
     </label>
   </div>
+  <div class="row chips" id="f-type">
+    <span class="lab">Type</span>
+    <button type="button" data-f="Linéaire" aria-pressed="false">Linéaire</button>
+    <button type="button" data-f="Tactile" aria-pressed="false">Tactile</button>
+    <button type="button" data-f="Clicky" aria-pressed="false">Clicky</button>
+    <button type="button" data-silent aria-pressed="false">Silencieux</button>
+  </div>
   <div class="row chips" id="f-src"></div>
   <div class="row">
     <label class="check"><input type="checkbox" id="f-multi"> Seulement les produits notés par plusieurs testeurs</label>
@@ -53,6 +60,6 @@
     puis on fait la moyenne. C'est un repère, pas une vérité.</p>
   <p>Toutes les notes, sous-notes et points forts/faibles appartiennent à leurs auteurs ; suivez les liens pour lire leurs tests complets.</p>
 </footer>
-<script src="app.js"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

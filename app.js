@@ -5,7 +5,7 @@ const fr = n => String(n).replace(".", ",");
 const PAGE = 50;
 
 let D, cat = "switch", shown = PAGE, view = [];
-const state = {q: "", src: new Set(), multi: false, sort: "combine"};
+const state = {q: "", src: new Set(), fam: new Set(), silent: false, multi: false, sort: "combine"};
 
 const score = a => a.sur === 5 ? `${fr(a.note)}★` : `${fr(a.note)}/${a.sur}`;
 const last = it => it.avis.map(a => a.date || "").sort().pop() || "";
@@ -14,6 +14,8 @@ function apply(){
   const q = norm(state.q).split(/\s+/).filter(Boolean);
   view = D.produits.filter(it => it.cat === cat &&
     (!state.src.size || [...state.src].every(s => it.avis.some(a => a.source === s))) &&
+    (!state.fam.size || state.fam.has(it.famille)) &&
+    (!state.silent || it.silencieux) &&
     (!state.multi || new Set(it.avis.map(a => a.source)).size > 1) &&
     q.every(w => it._txt.includes(w)));
   const by = {
@@ -111,11 +113,19 @@ async function init(){
     const s = b.dataset.s; state.src.has(s) ? state.src.delete(s) : state.src.add(s);
     b.setAttribute("aria-pressed", state.src.has(s)); shown = PAGE; render();
   });
+  $("#f-type").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.hasAttribute("data-silent")) state.silent = !state.silent;
+    else state.fam.has(b.dataset.f) ? state.fam.delete(b.dataset.f) : state.fam.add(b.dataset.f);
+    b.setAttribute("aria-pressed", b.hasAttribute("data-silent") ? state.silent : state.fam.has(b.dataset.f));
+    shown = PAGE; render();
+  });
   $("#q").addEventListener("input", e => { state.q = e.target.value; shown = PAGE; render(); });
   $("#sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
   $("#f-multi").addEventListener("change", e => { state.multi = e.target.checked; shown = PAGE; render(); });
   $("#reset").addEventListener("click", () => {
-    Object.assign(state, {q: "", multi: false}); state.src.clear();
+    Object.assign(state, {q: "", multi: false, silent: false}); state.src.clear(); state.fam.clear();
+    document.querySelectorAll("#f-type button").forEach(b => b.setAttribute("aria-pressed", "false"));
     $("#q").value = ""; $("#f-multi").checked = false; shown = PAGE; setCat(cat);
   });
   $("#more").addEventListener("click", () => { shown += PAGE; render(); });

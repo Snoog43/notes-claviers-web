@@ -86,7 +86,10 @@ async function init(){
   $("#sources").innerHTML = Object.entries(D.sources).map(([k, s]) => `
     <li style="--c:var(--s-${k})"><b><a href="${esc(s.lien)}" target="_blank" rel="noopener">${esc(s.nom)}</a><span>${s.avis} notes · ${s.langue}</span></b>
     <span>${esc(s.quoi)} · ${esc(s.echelle)}</span></li>`).join("");
-  for (const c of ["switch", "clavier"]) $("#n-" + c).textContent = `(${D.produits.filter(p => p.cat === c).length})`;
+  for (const c of ["switch", "clavier", "keycaps"]) {
+    const n = D.produits.filter(p => p.cat === c).length, tab = document.querySelector(`.tabs [data-cat="${c}"]`);
+    if (tab) { tab.hidden = !n; $("#n-" + c).textContent = `(${n})`; }
+  }
 
   document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setCat(b.dataset.cat); });
   $("#f-src").addEventListener("click", e => {

@@ -1,7 +1,7 @@
 :root{
   --bg:#f2efe8; --paper:#fffdf8; --ink:#16202c; --muted:#5d6670; --line:#dcd6ca;
   --navy:#1f3a5f; --accent:#e07a3f;
-  --s-aurore:#b4532a; --s-theremingoat:#3f6f5a; --s-tomshardware:#a3262e; --s-lesnumeriques:#2f5ca8; --s-guanwei:#7a3f9e; --s-clickandthock:#4b5563;
+  --s-aurore:#b4532a; --s-theremingoat:#3f6f5a; --s-tomshardware:#a3262e; --s-lesnumeriques:#2f5ca8; --s-guanwei:#7a3f9e; --s-clickandthock:#4b5563; --s-keebworks:#1d6f8a;
   font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box}

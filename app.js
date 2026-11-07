@@ -37,6 +37,11 @@ function sub(a){
       <span>douceur</span><span class="bar"><i style="width:${d.douceur}%"></i></span><span>${fr(d.douceur)} %</span></div>
       <p class="meta">Rang ${d.rang} sur ${D.sources.guanwei.avis} · nom d'origine ${esc(d.nom_chinois)}${d.prix_yuan ? ` · ${fr(d.prix_yuan)} ¥ le switch` : ""}</p>`;
   }
+  if (a.source === "keebworks") {
+    const L = {"Smoothness": "douceur", "Weighting": "poids", "Sound": "son", "Typing Performance": "frappe", "Gaming Performance": "jeu",
+      "Build Quality": "fabrication", "Features": "fonctions", "Daily Performance": "usage quotidien", "Reliability": "fiabilité", "Value": "rapport qualité-prix"};
+    return `<div class="sub">${Object.keys(d).map(k => `<span>${L[k] || esc(k)}</span><span class="bar"><i style="width:${d[k] * 10}%"></i></span><span>${fr(d[k])}/10</span>`).join("")}</div>`;
+  }
   if (a.source === "aurore") {
     return `<p class="meta">${esc((d.son || []).join(", "))}${d.prix ? " · " + esc(d.prix) : ""}${d.audios ? ` · ${d.audios} enregistrement${d.audios > 1 ? "s" : ""}` : ""}</p>`;
   }
